@@ -6,9 +6,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('/health')
-  @HttpCode(201)
   getHello(@Res({ passthrough: true }) res, @Req() req): object {
-    console.log(req);
     return this.appService.getHealth();
   }
 }
