@@ -40,7 +40,7 @@ export class DepartmentsService {
     };
   }
 
-  async findAllEmployee(
+  async getAllEmployees(
     id: number,
     page = 1,
     limit = 10,
