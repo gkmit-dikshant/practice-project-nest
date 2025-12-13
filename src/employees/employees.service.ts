@@ -12,8 +12,12 @@ export class EmployeesService {
   ) {}
 
   async create(createEmployeeDto: CreateEmployeeDto) {
-    const employee = this.employeeRepo.create(createEmployeeDto);
-    return await this.employeeRepo.save(employee);
+    const employee = this.employeeRepo.create({
+      ...createEmployeeDto,
+      department: { id: createEmployeeDto.departmentId },
+    });
+
+    return this.employeeRepo.save(employee);
   }
 
   async findAll(
@@ -38,7 +42,12 @@ export class EmployeesService {
   }
 
   async findOne(id: number) {
-    const employee = await this.employeeRepo.findOne({ where: { id } });
+    const employee = await this.employeeRepo.findOne({
+      where: { id },
+      relations: {
+        department: true,
+      },
+    });
 
     if (!employee) {
       throw new HttpException(
@@ -58,7 +67,8 @@ export class EmployeesService {
         HttpStatus.NOT_FOUND,
       );
     }
-    return exist;
+    await this.employeeRepo.save(exist);
+    return { message: 'update successfully' };
   }
 
   async remove(id: number) {
