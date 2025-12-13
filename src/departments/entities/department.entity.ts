@@ -14,7 +14,7 @@ export class Department {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ unique: true, nullable: false, length: 50 })
   name: string;
 
   @OneToMany(() => Employee, (employee) => employee.department, {
@@ -23,12 +23,25 @@ export class Department {
   })
   employees: Employee[];
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMPZ',
+  })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMPZ',
+  })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at', nullable: true, default: null })
+  @DeleteDateColumn({
+    name: 'deleted_at',
+    nullable: true,
+    type: 'timestamptz',
+    default: null,
+  })
   deletedAt: Date | null;
 }

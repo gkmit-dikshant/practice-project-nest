@@ -35,12 +35,25 @@ export class Employee {
   @JoinColumn({ name: 'department_id', referencedColumnName: 'id' })
   department: Department;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMPZ',
+  })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMPZ',
+  })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at', nullable: true, default: null })
+  @DeleteDateColumn({
+    name: 'deleted_at',
+    nullable: true,
+    type: 'timestamptz',
+    default: null,
+  })
   deletedAt: Date | null;
 }
