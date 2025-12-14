@@ -1,4 +1,4 @@
-import { Employee } from 'src/employees/entities/employee.entity';
+import { Employee } from '../../employees/entities/employee.entity';
 import {
   Column,
   CreateDateColumn,
