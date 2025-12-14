@@ -12,12 +12,23 @@ export class EmployeesService {
   ) {}
 
   async create(createEmployeeDto: CreateEmployeeDto) {
-    const employee = this.employeeRepo.create({
-      ...createEmployeeDto,
-      department: { id: createEmployeeDto.departmentId },
-    });
+    try {
+      const employee = this.employeeRepo.create({
+        ...createEmployeeDto,
+        department: { id: createEmployeeDto.departmentId },
+      });
 
-    return this.employeeRepo.save(employee);
+      return await this.employeeRepo.save(employee);
+    } catch (error) {
+      console.error(error);
+      if (error.code === '23505') {
+        throw new HttpException(error.detail, HttpStatus.CONFLICT);
+      }
+      throw new HttpException(
+        'Failed to create employee',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async findAll(
