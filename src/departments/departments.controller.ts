@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { DepartmentsService } from './departments.service';
 import { CreateDepartmentDto } from './dto/create-department.dto';
@@ -30,22 +31,22 @@ export class DepartmentsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.departmentsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.departmentsService.findOne(id);
   }
 
   @Get(':id/employees')
   getAllEmployees(
-    @Param('id') id: number,
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
+    @Param('id', ParseIntPipe) id: number,
+    @Query('page', ParseIntPipe) page = 1,
+    @Query('limit', ParseIntPipe) limit = 10,
   ) {
-    return this.departmentsService.getAllEmployees(+id, +page, +limit);
+    return this.departmentsService.getAllEmployees(id, page, limit);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateDepartmentDto: UpdateDepartmentDto,
   ) {
     return 'this action will update department details';
@@ -53,7 +54,7 @@ export class DepartmentsController {
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return 'this action will delete department';
   }
 }
