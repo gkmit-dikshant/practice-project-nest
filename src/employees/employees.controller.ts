@@ -12,6 +12,7 @@ import {
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { EmployeeQueryDto } from './dto/employee-query.dto';
 
 @Controller('employees')
 export class EmployeesController {
@@ -23,9 +24,9 @@ export class EmployeesController {
   }
 
   @Get()
-  findAll(@Query() query) {
+  findAll(@Query() query: EmployeeQueryDto) {
     const { page, limit } = query;
-    return this.employeesService.findAll(Number(page), Number(limit));
+    return this.employeesService.findAll(page, limit);
   }
 
   @Get(':id')

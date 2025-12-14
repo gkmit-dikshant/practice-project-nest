@@ -12,6 +12,7 @@ import {
 import { DepartmentsService } from './departments.service';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
+import { DepartmentQueryDto } from './dto/department-query.dto';
 
 @Controller('departments')
 export class DepartmentsController {
@@ -23,8 +24,9 @@ export class DepartmentsController {
   }
 
   @Get()
-  findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
-    return this.departmentsService.findAll(+page, +limit);
+  findAll(@Query() query: DepartmentQueryDto) {
+    const { page, limit } = query;
+    return this.departmentsService.findAll(page, limit);
   }
 
   @Get(':id')
