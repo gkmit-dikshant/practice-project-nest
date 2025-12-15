@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Employee } from 'src/employees/entities/employee.entity';
 import {
   Column,
@@ -40,5 +41,6 @@ export class Department {
     type: 'timestamptz',
     default: null,
   })
+  @Exclude()
   deletedAt: Date | null;
 }
