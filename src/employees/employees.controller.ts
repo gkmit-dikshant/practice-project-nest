@@ -8,10 +8,12 @@ import {
   Delete,
   Query,
   HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { EmployeeQueryDto } from './dto/employee-query.dto';
 
 @Controller('employees')
 export class EmployeesController {
@@ -23,27 +25,27 @@ export class EmployeesController {
   }
 
   @Get()
-  findAll(@Query() query) {
+  findAll(@Query() query: EmployeeQueryDto) {
     const { page, limit } = query;
-    return this.employeesService.findAll(Number(page), Number(limit));
+    return this.employeesService.findAll(page, limit);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.employeesService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.employeesService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    return this.employeesService.update(+id, updateEmployeeDto);
+    return this.employeesService.update(id, updateEmployeeDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id') id: string) {
-    return this.employeesService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.employeesService.remove(id);
   }
 }

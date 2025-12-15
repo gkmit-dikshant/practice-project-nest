@@ -1,4 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { PartialType, PickType } from '@nestjs/mapped-types';
 import { CreateEmployeeDto } from './create-employee.dto';
 
-export class UpdateEmployeeDto extends PartialType(CreateEmployeeDto) {}
+export class UpdateEmployeeDto extends PartialType(
+  PickType(CreateEmployeeDto, ['name', 'salary', 'departmentId']),
+) {}

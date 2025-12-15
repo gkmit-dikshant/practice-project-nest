@@ -1,26 +1,112 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
+import { Department } from './entities/department.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Employee } from 'src/employees/entities/employee.entity';
 
 @Injectable()
 export class DepartmentsService {
-  create(createDepartmentDto: CreateDepartmentDto) {
-    return 'This action adds a new department';
+  constructor(
+    @InjectRepository(Department)
+    private departmentRepo: Repository<Department>,
+    @InjectRepository(Employee)
+    private employeeRepo: Repository<Employee>,
+  ) {}
+  async create(createDepartmentDto: CreateDepartmentDto) {
+    const department = this.departmentRepo.create(createDepartmentDto);
+    return await this.departmentRepo.save(department);
   }
 
-  findAll() {
-    return `This action returns all departments`;
+  async findAll(
+    page = 1,
+    limit = 10,
+    sort: keyof Department = 'createdAt',
+    order: 'ASC' | 'DESC' = 'DESC',
+  ) {
+    const [data, total] = await this.departmentRepo.findAndCount({
+      order: { [sort]: order },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} department`;
+  async getAllEmployees(
+    id: number,
+    page = 1,
+    limit = 10,
+    sort: keyof Employee = 'createdAt',
+    order: 'ASC' | 'DESC' = 'DESC',
+  ) {
+    const department = await this.departmentRepo.findOne({ where: { id } });
+    if (!department) {
+      throw new HttpException(
+        `Department with id ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    const [data, total] = await this.employeeRepo.findAndCount({
+      where: { department: { id } },
+      order: { [sort]: order },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
-  update(id: number, updateDepartmentDto: UpdateDepartmentDto) {
-    return `This action updates a #${id} department`;
+  async findOne(id: number) {
+    const department = await this.departmentRepo.findOne({ where: { id } });
+
+    if (!department) {
+      throw new HttpException(
+        `Department with id ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return department;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} department`;
+  async update(id: number, updateDepartmentDto: UpdateDepartmentDto) {
+    const exist = await this.departmentRepo.preload({
+      id,
+      ...updateDepartmentDto,
+    });
+    if (!exist) {
+      throw new HttpException(
+        `Department with id ${id} doesn't exists`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return exist;
+  }
+
+  async remove(id: number) {
+    const exist = await this.departmentRepo.findOne({ where: { id } });
+    if (!exist) {
+      throw new HttpException(
+        `Department with id ${id} doesn't exists`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    await this.departmentRepo.softDelete(id);
+    return null;
   }
 }
