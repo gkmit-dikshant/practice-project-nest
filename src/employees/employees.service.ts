@@ -23,6 +23,8 @@ export class EmployeesService {
       console.error(error);
       if (error.code === '23505') {
         throw new HttpException(error.detail, HttpStatus.CONFLICT);
+      } else if (error.code === '23503') {
+        throw new HttpException(error.detail, HttpStatus.NOT_FOUND);
       }
       throw new HttpException(
         'Failed to create employee',
