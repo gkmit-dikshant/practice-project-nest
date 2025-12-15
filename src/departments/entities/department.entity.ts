@@ -1,5 +1,6 @@
+import { Employee } from '../../employees/entities/employee.entity';
 import { Exclude } from 'class-transformer';
-import { Employee } from 'src/employees/entities/employee.entity';
+
 import {
   Column,
   CreateDateColumn,

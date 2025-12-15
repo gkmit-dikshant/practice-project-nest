@@ -1,5 +1,6 @@
+import { Department } from '../../departments/entities/department.entity';
 import { Exclude } from 'class-transformer';
-import { Department } from 'src/departments/entities/department.entity';
+
 import {
   Check,
   Column,
