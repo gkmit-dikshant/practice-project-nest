@@ -12,12 +12,25 @@ export class EmployeesService {
   ) {}
 
   async create(createEmployeeDto: CreateEmployeeDto) {
-    const employee = this.employeeRepo.create({
-      ...createEmployeeDto,
-      department: { id: createEmployeeDto.departmentId },
-    });
+    try {
+      const employee = this.employeeRepo.create({
+        ...createEmployeeDto,
+        department: { id: createEmployeeDto.departmentId },
+      });
 
-    return this.employeeRepo.save(employee);
+      return await this.employeeRepo.save(employee);
+    } catch (error) {
+      console.error(error);
+      if (error.code === '23505') {
+        throw new HttpException(error.detail, HttpStatus.CONFLICT);
+      } else if (error.code === '23503') {
+        throw new HttpException(error.detail, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException(
+        'Failed to create employee',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async findAll(
@@ -60,14 +73,36 @@ export class EmployeesService {
   }
 
   async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
-    const exist = await this.employeeRepo.preload({ id, ...updateEmployeeDto });
+    const exist = await this.employeeRepo.findOne({
+      where: { id },
+      relations: { department: true },
+    });
+    console.log(exist);
     if (!exist) {
       throw new HttpException(
         `employee with id ${id} doesn't exists`,
         HttpStatus.NOT_FOUND,
       );
     }
-    await this.employeeRepo.save(exist);
+
+    if (updateEmployeeDto.departmentId) {
+      exist.department.id = updateEmployeeDto.departmentId;
+    }
+
+    try {
+      const newData = this.employeeRepo.merge(exist, updateEmployeeDto);
+      await this.employeeRepo.save(newData);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new HttpException(error.detail, HttpStatus.CONFLICT);
+      } else if (error.code === '23503') {
+        throw new HttpException(error.detail, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException(
+        'Failed to create employee',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
     return { message: 'update successfully' };
   }
 

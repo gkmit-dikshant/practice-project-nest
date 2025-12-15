@@ -1,4 +1,6 @@
 import { Department } from '../../departments/entities/department.entity';
+import { Exclude } from 'class-transformer';
+
 import {
   Check,
   Column,
@@ -31,6 +33,8 @@ export class Employee {
 
   @ManyToOne(() => Department, (department) => department.employees, {
     nullable: false,
+    cascade: ['soft-remove'],
+    onDelete: 'RESTRICT',
   })
   @JoinColumn({ name: 'department_id', referencedColumnName: 'id' })
   department: Department;
@@ -55,5 +59,6 @@ export class Employee {
     type: 'timestamptz',
     default: null,
   })
+  @Exclude()
   deletedAt: Date | null;
 }

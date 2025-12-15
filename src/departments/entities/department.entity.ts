@@ -1,4 +1,6 @@
 import { Employee } from '../../employees/entities/employee.entity';
+import { Exclude } from 'class-transformer';
+
 import {
   Column,
   CreateDateColumn,
@@ -17,10 +19,7 @@ export class Department {
   @Column({ unique: true, nullable: false, length: 50 })
   name: string;
 
-  @OneToMany(() => Employee, (employee) => employee.department, {
-    cascade: ['soft-remove'],
-    onDelete: 'RESTRICT',
-  })
+  @OneToMany(() => Employee, (employee) => employee.department)
   employees: Employee[];
 
   @CreateDateColumn({
@@ -43,5 +42,6 @@ export class Department {
     type: 'timestamptz',
     default: null,
   })
+  @Exclude()
   deletedAt: Date | null;
 }
