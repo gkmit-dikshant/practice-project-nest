@@ -77,7 +77,7 @@ export class EmployeesService {
       where: { id },
       relations: { department: true },
     });
-    console.log(exist);
+
     if (!exist) {
       throw new HttpException(
         `employee with id ${id} doesn't exists`,

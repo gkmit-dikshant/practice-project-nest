@@ -11,6 +11,7 @@ const mockEmployeeRepo = {
   findOne: jest.fn(),
   preload: jest.fn(),
   softDelete: jest.fn(),
+  merge: jest.fn(),
 };
 
 describe('EmployeesService', () => {
@@ -109,25 +110,21 @@ describe('EmployeesService', () => {
 
   describe('update', () => {
     it('should update employee successfully', async () => {
+      const id = 1;
       const dto = { name: 'Updated' };
-      const existing = { id: 1, ...dto };
-
-      mockEmployeeRepo.preload.mockResolvedValue(existing);
-      mockEmployeeRepo.save.mockResolvedValue(existing);
-
-      const result = await service.update(1, dto);
-
-      expect(mockEmployeeRepo.preload).toHaveBeenCalledWith({
-        id: 1,
+      const updatedUser = {
+        id,
         ...dto,
-      });
-      expect(mockEmployeeRepo.save).toHaveBeenCalledWith(existing);
+      };
+      mockEmployeeRepo.findOne.mockResolvedValue(updatedUser);
+      mockEmployeeRepo.save.mockResolvedValue(updatedUser);
+      mockEmployeeRepo.merge.mockReturnValue(updatedUser);
+      const result = await service.update(1, dto);
+      expect(mockEmployeeRepo.save).toHaveBeenCalledWith(updatedUser);
       expect(result).toEqual({ message: 'update successfully' });
     });
-
     it('should throw error if employee not found', async () => {
-      mockEmployeeRepo.preload.mockResolvedValue(null);
-
+      mockEmployeeRepo.findOne.mockResolvedValue(null);
       await expect(service.update(1, {})).rejects.toThrow(HttpException);
     });
   });

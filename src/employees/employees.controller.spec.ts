@@ -71,8 +71,8 @@ describe('EmployeesController', () => {
 
   describe('findAll', () => {
     it('should return list of employee', async () => {
-      const page = '1',
-        limit = '10';
+      const page = 1,
+        limit = 10;
 
       const data = [
         {
@@ -90,13 +90,13 @@ describe('EmployeesController', () => {
 
       service.findAll.mockResolvedValue(data as any);
       const result = await controller.findAll({ page, limit });
-      expect(service.findAll).toHaveBeenCalledWith(+page, +limit);
+      expect(service.findAll).toHaveBeenCalledWith(page, limit);
       expect(result).toEqual(data);
     });
   });
 
   describe('findOne', () => {
-    const id = '1';
+    const id = 1;
     it('should return employee', async () => {
       const data = {
         id: 14,
@@ -119,7 +119,7 @@ describe('EmployeesController', () => {
       service.findOne.mockResolvedValue(data as any);
       const result = await controller.findOne(id);
 
-      expect(service.findOne).toHaveBeenCalledWith(+id);
+      expect(service.findOne).toHaveBeenCalledWith(id);
       expect(result).toEqual(data);
     });
 
@@ -132,11 +132,11 @@ describe('EmployeesController', () => {
       );
 
       await expect(controller.findOne(id)).rejects.toThrow(HttpException);
-      expect(service.findOne).toHaveBeenCalledWith(+id);
+      expect(service.findOne).toHaveBeenCalledWith(id);
     });
   });
   describe('update', () => {
-    const id = '1';
+    const id = 1;
     it('should return success message', async () => {
       const dto = {
         name: 'test',
@@ -144,12 +144,12 @@ describe('EmployeesController', () => {
       service.update.mockResolvedValue({ message: 'updated successfully' });
       const result = await controller.update(id, dto);
 
-      expect(service.update).toHaveBeenCalledWith(+id, dto);
+      expect(service.update).toHaveBeenCalledWith(id, dto);
       expect(result).toEqual({ message: 'updated successfully' });
     });
   });
   describe('delete', () => {
-    const id = '1';
+    const id = 1;
 
     it('should return nothing', async () => {
       service.remove.mockResolvedValue(null);
