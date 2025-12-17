@@ -44,15 +44,6 @@ export class DepartmentsController {
     return this.departmentsService.getAllEmployees(id, page, limit);
   }
 
-  @Get(':id/employees')
-  getAllEmployees(
-    @Param('id') id: number,
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-  ) {
-    return this.departmentsService.getAllEmployees(+id, +page, +limit);
-  }
-
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
