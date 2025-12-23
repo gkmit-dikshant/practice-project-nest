@@ -21,7 +21,8 @@
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "seed:data": "ts-node -r tsconfig-paths/register ./src/seeders/seed.helper.ts",
     "migration:generate": "npm run build && npm run typeorm -- migration:generate -d ormconfig.ts",
-    "migration:run": "npm run typeorm -- migration:run -d ormconfig.ts",
+    "migration:create": "typeorm migration:create ./src/migrations/${NAME}",
+    "migration:run": "npm run build && npm run typeorm -- migration:run -d ormconfig.ts",
     "migration:revert": "npm run typeorm -- migration:revert -d ormconfig.ts",
     "migration:show": "npm run typeorm -- migration:show -d ormconfig.ts",
     "prepare": "husky"
