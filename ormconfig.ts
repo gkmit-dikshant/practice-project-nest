@@ -9,11 +9,9 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASS || 'postgres',
   database: process.env.DB_NAME || 'emp_db',
-  synchronize: process.env.SYNCHRONIZE === 'true',
-  logging: false,
-  entities: [__dirname + '/**/*.entity.js'],
-  migrations: [__dirname + '/migrations/*.js'],
-  subscribers: [],
+  entities: ['dist/**/*.entity.js'],
+  migrations: ['dist/src/migrations/*.js'],
+  synchronize: false,
+  migrationsRun: false,
+  migrationsTableName: 'migration_data',
 });
-
-export default AppDataSource;
